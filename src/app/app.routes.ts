@@ -7,17 +7,18 @@ import { InicioComponent } from './COMPONENTES/inicio/inicio.component';
 import { EsperaComponent } from './COMPONENTES/espera/espera.component';
 import { JuegoComponent } from './COMPONENTES/juego/juego.component';
 import { EstadisticasComponent } from './COMPONENTES/estadisticas/estadisticas.component';
+import { verificarGuard } from './Guards/verificar.guard';
 
 export const routes: Routes = [
 
     {path: 'login', component: LoginComponent},
     {path: 'register', component: RegisterComponent},
-    {path: 'verificar', component: VerificarComponent},
+    {path: 'verificar', component: VerificarComponent, canActivate: [verificarGuard]},
     {path: 'bienvenida', component: BienvenidaComponent},
     {path: 'inicio', component: InicioComponent},
     {path: 'espera', component: EsperaComponent},
     {path: 'juego', component: JuegoComponent},
-    {path: 'estadisticas', component: EstadisticasComponent},
+    {path: 'estadisticas', component: EstadisticasComponent}, 
 
     {
         path: '**',

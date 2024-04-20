@@ -13,12 +13,13 @@
 
     <div class="container" id="container" >
         <div class="form-container sign-in">
-            <form>
+            <form [formGroup]="verifyForm">
                 <h1>Verifica tu código</h1>
         
                 <span>Ingresa el código que te mandamos por email</span>
-                <input placeholder="123456">
-                <button routerLink="/bienvenida">Continuar</button>
+
+                <input formControlName="code" name="code" type="text" required placeholder="Código" minlength="6" maxlength="6">
+                <button type="submit" [disabled]="isLoading" (click)="verifyCode()">Continuar</button>
             </form>
         </div>
 

@@ -10,5 +10,9 @@ import { RouterModule, RouterOutlet } from '@angular/router';
   styleUrl: './bienvenida.component.css'
 })
 export class BienvenidaComponent {
+  constructor() { }
 
+  ngOnInit(): void {
+    localStorage.clear();
+  }
 }
