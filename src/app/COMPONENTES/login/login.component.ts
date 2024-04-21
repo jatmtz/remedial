@@ -32,6 +32,7 @@ export class LoginComponent {
 
   Login() {
     if (this.loginForm.valid) {
+      this.isLoading = true;
       this.authService.logCode(this.loginForm.value.email, this.loginForm.value.password).subscribe({
         next: (response: any) => {
           console.log(response);

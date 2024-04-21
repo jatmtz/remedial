@@ -1,22 +1,26 @@
 <body>
-    <div class="container3">
-        <h2 class="h22">Tus estadísticas</h2>
-        <div style="overflow: auto;">
-        <table style=" border-collapse: collapse;border-radius: 1em;overflow: hidden; margin: 10px 20px 30px;min-width:400px;font-family:Roboto;font-size: 0.9em;text-align:center;box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);">
-            <tr>
-              <th style="padding: 1em;background-color: #46bdc6;color: #ffffff;border-bottom: 2px solid white; font-size: 20px;">Partidas jugadas</th>
-              <th style="padding: 1em;background-color: #46bdc6;color: #ffffff;border-bottom: 2px solid white; font-size: 20px;">Partidas ganadas</th>
-              <th style="padding: 1em;background-color: #46bdc6;color: #ffffff;border-bottom: 2px solid white; font-size: 20px;">Partidas perdidas</th>
-            </tr>
-            <tr>
-              <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">3</td>
-              <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">2</td>
-              <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">1</td>
-            </tr>
-           
-          </table>
-        </div>
-          <button routerLink="/inicio">Volver</button>
+  <div class="container3">
+    <h2 class="h22">Tus estadísticas</h2>
+    <div style="overflow: auto;" *ngIf="!noEstadisticas; else noStats">
+      <table style="border-collapse: collapse;border-radius: 1em;overflow: hidden; margin: 10px 20px 30px;min-width:400px;font-family:Roboto;font-size: 0.9em;text-align:center;box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);">
+        <tr>
+          <th style="padding: 1em;background-color: #46bdc6;color: #ffffff;border-bottom: 2px solid white; font-size: 20px;">Partidas ganadas</th>
+          <th style="padding: 1em;background-color: #46bdc6;color: #ffffff;border-bottom: 2px solid white; font-size: 20px;">Partidas perdidas</th>
+          <th style="padding: 1em;background-color: #46bdc6;color: #ffffff;border-bottom: 2px solid white; font-size: 20px;">Rivales</th>
+        </tr>
+        <tr>
+          <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">{{ totalGanadas }}</td>
+          <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">{{ totalPerdidas }}</td>          
+          <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">
+            <span *ngFor="let rival of rivales">{{ rival }}</span>
+          </td>
+        </tr>
+      </table>
     </div>
-    
+    <ng-template #noStats>
+      <p>No tienes partidas registradas.</p>
+    </ng-template>
+    <button routerLink="/inicio">Volver</button>
+  </div>
+  
 </body>

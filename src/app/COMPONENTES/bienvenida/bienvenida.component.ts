@@ -13,6 +13,5 @@ export class BienvenidaComponent {
   constructor() { }
 
   ngOnInit(): void {
-    localStorage.clear();
   }
 }

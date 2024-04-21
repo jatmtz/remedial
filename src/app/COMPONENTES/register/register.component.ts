@@ -29,6 +29,7 @@ export class RegisterComponent {
 
   register() {
     if (this.registerForm.valid) {
+      this.isLoading = true;
       this.authService.register(this.registerForm.value).subscribe({
         next: (response: any) => {
           console.log(response);

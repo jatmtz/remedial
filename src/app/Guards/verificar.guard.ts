@@ -1,6 +1,7 @@
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
@@ -8,7 +9,8 @@ import { Observable, of } from 'rxjs';
 })
 export class verificarGuard implements CanActivate {
   constructor(
-    private router : Router
+    private router : Router,
+    private cookie: CookieService
   ) { }
 
   canActivate(

@@ -30,6 +30,7 @@ export class VerificarComponent {
 
   verifyCode() {
     if (this.verifyForm.valid) {
+      this.isLoading = true;
       const email = localStorage.getItem('email');
       const password = localStorage.getItem('password');
       const codigo = this.verifyForm.value.code;

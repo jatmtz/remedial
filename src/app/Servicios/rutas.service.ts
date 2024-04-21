@@ -32,7 +32,12 @@ export class RutasService {
     return this.http.post(`${environment.api_url}/auth/verifyToken`, {headers});
   }
   logout(){
-    return this.http.post(`${environment.api_url}/auth/logout`, {});
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.cookie.get('token'));
+    return this.http.post(`${environment.api_url}/auth/logout`, {headers}, );
+  }
+
+  Estadisticas(): Observable<any>{
+    return this.http.get(`${environment.api_url}/auth/estadisticas`, {headers: this.headers});
   }
   
 
