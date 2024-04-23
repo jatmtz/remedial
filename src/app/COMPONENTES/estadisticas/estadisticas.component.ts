@@ -15,34 +15,53 @@ import { RutasService } from '../../Servicios/rutas.service';
 export class EstadisticasComponent {
   $estadisticas: Estadisticas[] = [];
   noEstadisticas = false;
-  totalGanadas: number = 0;
-  totalPerdidas: number = 0;
+  ganadas = 0;
+  perdidas = 0;
   rivales: string[] = [];
 
   constructor(private rutasService: RutasService) {}
 
   ngOnInit() {
-    this.getEstadisticas();
+    this.getVictorias();
+    this.getDerrotas();
+    this.getRivales();
   }
 
-  getEstadisticas() {
-    this.rutasService.Estadisticas().subscribe(
-      (data: Estadisticas[]) => {
+  getRivales()
+  {
+    this.rutasService.getRivales().subscribe(
+      (data: any) => {
         console.log(data);
-        this.$estadisticas = data;
-
-        // Calcular totales de partidas ganadas y perdidas
-        this.totalGanadas = this.$estadisticas.reduce((total, estadistica) => total + estadistica.ganadas, 0);
-        this.totalPerdidas = this.$estadisticas.reduce((total, estadistica) => total + estadistica.perdidas, 0);
-
-        // Calcular los rivales
-        this.rivales = this.$estadisticas.flatMap(estadistica => estadistica.rivales);      
+        this.rivales = data.rivales.map((rival: any) => rival.name);
       },
       (error: HttpErrorResponse) => {
         console.log(error);
-        if (error.status === 404) {
-          this.noEstadisticas = true;
-        }
+      }
+    );
+  }
+
+  getVictorias()
+  {
+    this.rutasService.getVictorias().subscribe(
+      (data: any) => {
+        console.log(data);
+        this.ganadas = data.ganadas;
+      },
+      (error: HttpErrorResponse) => {
+        console.log(error);
+      }
+    );
+  }
+
+  getDerrotas()
+  {
+    this.rutasService.getDerrotas().subscribe(
+      (data: any) => {
+        console.log(data);
+        this.perdidas = data.perdidas;
+      },
+      (error: HttpErrorResponse) => {
+        console.log(error);
       }
     );
   }

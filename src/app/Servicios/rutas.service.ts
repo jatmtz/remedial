@@ -39,6 +39,18 @@ export class RutasService {
   Estadisticas(): Observable<any>{
     return this.http.get(`${environment.api_url}/auth/estadisticas`, {headers: this.headers});
   }
+
+  getRivales(): Observable<any>{
+    return this.http.get(`${environment.api_url}/auth/rivales`, {headers: this.headers});
+  }
+
+  getVictorias(): Observable<any>{
+    return this.http.get(`${environment.api_url}/auth/victorias`, {headers: this.headers});
+  }
+
+  getDerrotas(): Observable<any>{
+    return this.http.get(`${environment.api_url}/auth/derrotas`, {headers: this.headers});
+  }
   
 
 }
