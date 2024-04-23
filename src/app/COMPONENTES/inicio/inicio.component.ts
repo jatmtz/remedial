@@ -21,6 +21,7 @@ export class InicioComponent {
   $partidas: Partida[] = [];
   noPartidas = false;
   isLoading = false;
+  token: string | null = null;
 
   constructor(
     private router: Router,
@@ -47,7 +48,10 @@ export class InicioComponent {
       
     });
     this.getPartidas();
+    this.token = this.cookie.get('access_token');
   }
+
+
 
   getPartidas()
   {
@@ -64,6 +68,7 @@ export class InicioComponent {
   {
     this.isLoading = true;
     this.partidasService.createPartida().subscribe((data: any) => {
+      
       this.isLoading = false;
       console.log(data);
       this.router.navigate(['/espera']);
@@ -74,7 +79,7 @@ export class InicioComponent {
   {
     this.partidasService.unirsePartida(id).subscribe((data: any) => {
       console.log(data);
-      this.router.navigate(['/espera']);
+      this.router.navigate(['/juego']);
     });
   }
 

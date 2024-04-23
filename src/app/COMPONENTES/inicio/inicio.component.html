@@ -2,7 +2,7 @@
     <div class="container2" *ngIf="!noPartidas; else noPartidasTemplate">
         <div class="container1" *ngFor="let partida of $partidas">
           <h2>Partida en espera...</h2>
-          <button (click)="partida.id">Jugar!!</button>
+          <button (click)="unirsePartida(partida.id)">Jugar!!</button>
         </div>
     </div>
 
