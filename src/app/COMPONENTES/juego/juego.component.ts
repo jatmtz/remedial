@@ -33,9 +33,9 @@ export class JuegoComponent implements OnInit{
     .listen('.barco', (data: any) => {
       console.log(data);
       console.log('hola');
-      if (data.player === 1){
+      if (data.player === 2){
         this.iniciarAnimacion1();
-      } else if (data.player === 2) {
+      } else if (data.player === 1) {
         this.iniciarAnimacion2();
       }
     
