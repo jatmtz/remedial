@@ -1,24 +1,32 @@
 import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
-import { AnimationBuilder, AnimationPlayer } from '@angular/animations';
-import { animate, style } from '@angular/animations';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import { CookieService } from 'ngx-cookie-service';
+import { PartidasService } from '../../Servicios/partidas.service';
+import { RutasService } from '../../Servicios/rutas.service';
+import { Router } from '@angular/router';
+import { Partida } from '../inicio/inicio.component';
 
 @Component({
   selector: 'app-juego',
-  standalone: true,
-  imports: [],
   templateUrl: './juego.component.html',
-  styleUrl: './juego.component.css'
+  styleUrls: ['./juego.component.css']
 })
-export class JuegoComponent implements OnInit{
+export class JuegoComponent implements OnInit {
+  isLoading = false;
+  token: string | null = null;
+  idPartida: number | null = null; 
 
-  constructor(private renderer: Renderer2, private elementRef: ElementRef) {
+  constructor(
+    private renderer: Renderer2,
+    private elementRef: ElementRef,
+    private router: Router,
+    private cookie: CookieService,
+    private partidasService: PartidasService,
+    private rutasService: RutasService
+  ) {}
 
-  }
-
-  ngOnInit(){
-    
+  ngOnInit() {
     (window as any).Pusher = Pusher;
     (window as any).Echo = new Echo({
       broadcaster: 'pusher',
@@ -29,31 +37,60 @@ export class JuegoComponent implements OnInit{
       forceTLS: false,
       disableStatus: true,
     }); 
-    (window as any).Echo.channel('barco-pantalla')
-    .listen('.barco', (data: any) => {
+
+    (window as any).Echo.channel('barco-pantalla').listen('.barco', (data: any) => {
       console.log(data);
       console.log('hola');
-      if (data.player === 2){
+      if (data.player === 2) {
         this.iniciarAnimacion1();
       } else if (data.player === 1) {
         this.iniciarAnimacion2();
       }
-    
     });
+    this.obtenerTurno();
   }
 
-  iniciarAnimacion1(){
+  iniciarAnimacion1() {
     const imagen = this.elementRef.nativeElement.querySelector('.containerImagen');
-
     this.renderer.addClass(imagen, 'moverBarco');
+    imagen.addEventListener('animationend', () => {
+      if (this.idPartida !== null) {
+        this.cambiarTurno(this.idPartida);
+      }
+    }, { once: true });
   }
 
-  iniciarAnimacion2(){
+  iniciarAnimacion2() {
     const imagen = this.elementRef.nativeElement.querySelector('.containerImagen');
-
     this.renderer.addClass(imagen, 'moverBarco');
+    imagen.addEventListener('animationend', () => {
+      if (this.idPartida !== null) {
+        this.cambiarTurno(this.idPartida);
+      }
+    }, { once: true });
   }
 
+  obtenerTurno() {
+    this.partidasService.obtenerTurno().subscribe(
+      (data: any) => {
+        console.log('Turno obtenido:', data);
+        this.idPartida = data.idPartida;
+      },
+      error => {
+        console.error('Error al obtener el turno:', error);
+      }
+    );
+  }
 
-
+  cambiarTurno(idPartida: number) {
+    //const data = { id_partida: idPartida };
+    this.partidasService.cambiarTurno(idPartida).subscribe(
+      response => {
+        console.log('Turno cambiado exitosamente:', response);
+      },
+      error => {
+        console.error('Error al cambiar el turno:', error);
+      }
+    );
+  }
 }
