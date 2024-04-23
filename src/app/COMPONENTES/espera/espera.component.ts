@@ -43,7 +43,7 @@ export class EsperaComponent {
   }
 
   redirectToJuegoComponent(partidaId: number) {
-    this.router.navigate(['/juego', partidaId]);
+    this.router.navigate(['/juego']);
   }
 }
 
