@@ -61,6 +61,9 @@ export class InicioComponent {
       if (this.$partidas.length === 0) {
         this.noPartidas = true;
       }
+      else {
+        this.noPartidas = false;
+      }
     });
   }
 

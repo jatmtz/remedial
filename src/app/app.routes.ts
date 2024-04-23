@@ -18,7 +18,7 @@ export const routes: Routes = [
     {path: 'bienvenida', component: BienvenidaComponent, canActivate: [AuthGuard]},
     {path: 'inicio', component: InicioComponent},
     {path: 'espera', component: EsperaComponent},
-    {path: 'juego', component: JuegoComponent},
+    {path: 'juego/:partidaId', component: JuegoComponent},
     {path: 'estadisticas', component: EstadisticasComponent}, 
 
     {
