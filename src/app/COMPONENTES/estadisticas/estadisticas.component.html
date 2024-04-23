@@ -9,10 +9,10 @@
           <th style="padding: 1em;background-color: #46bdc6;color: #ffffff;border-bottom: 2px solid white; font-size: 20px;">Rivales</th>
         </tr>
         <tr>
-          <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">{{ totalGanadas }}</td>
-          <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">{{ totalPerdidas }}</td>          
+          <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">{{ ganadas }}</td>
+          <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">{{ perdidas}}</td>          
           <td style="padding: 1em; border-bottom: 2px solid white; font-size: 20px;">
-            <span *ngFor="let rival of rivales">{{ rival }}</span>
+            {{ rivales }}
           </td>
         </tr>
       </table>
