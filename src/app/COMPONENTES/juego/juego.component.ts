@@ -39,12 +39,14 @@ export class JuegoComponent implements OnInit {
       disableStatus: true,
     }); 
 
-    (window as any).Echo.channel('barco-pantalla').listen('.barco', (data: any) => {
+    (window as any).Echo.channel('player-turn').listen('.player-turno', (data: any) => {
       console.log(data);
+      if (data.player === this.cookie.get('id')) {
+        //this.iniciarAnimacion1();
+      } 
       console.log('hola-juego');
-     
     });
-    this.obtenerTurno();
+
   }
 
   activarAnimacion() {
@@ -56,9 +58,14 @@ export class JuegoComponent implements OnInit {
   }, this.tiempo);
   }
 
+
+/*obtenerTurno(idPartida: number) {
+    this.partidasService.obtenerTurno(idPartida).subscribe(*/
+      
+
  
   obtenerTurno() {
-    this.partidasService.obtenerTurno().subscribe(
+    /*this.partidasService.obtenerTurno().subscribe(
       (data: any) => {
         console.log('Turno obtenido:', data);
         this.idPartida = data.idPartida;
@@ -66,7 +73,7 @@ export class JuegoComponent implements OnInit {
       error => {
         console.error('Error al obtener el turno:', error);
       }
-    );
+    );*/
   }
 
  
