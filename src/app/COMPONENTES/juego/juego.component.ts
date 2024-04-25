@@ -78,7 +78,8 @@ export class JuegoComponent implements OnInit {
   }
 
   cambiarTurno() {
-    this.partidasService.cambiarTurno(Number(this.cookie.get('idPartida'))).subscribe(
+    //const data = { id_partida: idPartida };
+    this.partidasService.cambiarTurnos(Number(this.cookie.get('idPartida'))).subscribe(
       response => {
         console.log('Turno cambiado exitosamente:', response);
       },

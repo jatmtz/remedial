@@ -40,8 +40,13 @@ export class PartidasService {
     return this.http.get(`${environment.api_url}/partidas/turno/${id}`, {headers: this.headers});
   }
 
-  cambiarTurno(id_partida: number): Observable<any>{
+
+  cambiarTurnos(id_partida: number): Observable<any>{
     return this.http.put(`${environment.api_url}/partidas/cambiarTurno`, {id_partida}, {headers: this.headers});
+  }
+
+  cambiarTurno(idPartida: number): Observable<any> {
+    return this.http.put(`${environment.api_url}/partidas/cambiarTurno`, { id_partida: idPartida }, {headers: this.headers});
   }
   
 }
