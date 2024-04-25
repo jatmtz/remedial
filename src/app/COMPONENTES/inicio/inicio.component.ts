@@ -22,6 +22,7 @@ export class InicioComponent {
   noPartidas = false;
   isLoading = false;
   token: string | null = null;
+  private echoChannel: any;
 
   constructor(
     private router: Router,
@@ -41,8 +42,8 @@ export class InicioComponent {
       forceTLS: false,
       disableStatus: true,
     }); 
-    (window as any).Echo.channel('barco-pantalla')
-    .listen('.barco', (data: any) => {
+    this.echoChannel = (window as any).Echo.channel('barco-pantalla');
+    this.echoChannel.listen('.barco', (data: any) => {
       this.getPartidas();
       console.log('hola');
       
@@ -69,6 +70,9 @@ export class InicioComponent {
 
   crearPartida()
   {
+    if (this.echoChannel) {
+      this.echoChannel.stopListening('.barco');
+    }
     this.isLoading = true;
     this.partidasService.createPartida().subscribe((data: any) => {
       
@@ -80,6 +84,9 @@ export class InicioComponent {
 
   unirsePartida(id: number)
   {
+    if (this.echoChannel) {
+      this.echoChannel.stopListening('.barco');
+    }
     this.partidasService.unirsePartida(id).subscribe((data: any) => {
       console.log(data);
       this.router.navigate(['/juego']);

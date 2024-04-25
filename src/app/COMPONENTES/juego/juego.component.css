@@ -9,28 +9,19 @@ h1{
   body {
     background-image: url(../.././../assets/imagenes/mar.gif);
     background-repeat: repeat-x;
-    background-size: 100px 100px;
+    background-size: 50px 50px;
     background-position: bottom, left;
     background-color: #1c79cf;
     color: #000;
     display: flex;
-    align-items: flex-start;
     flex-direction: column;
-    height: 95vh;
+    height: 50vh;
+    width: 500px;
+    position: relative; /* Agregamos posición relativa para controlar el posicionamiento absoluto */
+    overflow: hidden;
   }
 
-  button{
-    background-color: #1680b1;
-    color: #fff;
-    font-size: 12px;
-    padding: 15px 45px;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-top: 5px;
-    cursor: pointer;
-}
+
 
 .container1{
   background-color: #1ec6f0;
@@ -73,27 +64,44 @@ h1{
   .barra{
     background-color: red;
     width: 100%;
-    height: 150px;
+    height: 50px;
   }
   
   .containerImgHeight{
-    padding-top: 330px;
-    position: relative;
-    animation: moverBarco 9s linear infinite;
-    /*border: 5px solid black;*/
+    padding-top: 250px;
+    position: absolute; /* Posicionamiento absoluto para alinear con respecto al cuerpo */
+    left: 0;
+    top: 0;
     
   }
+
+  .moverBarco{
+    animation: moverBarco 9s linear;
+    
+  }
+
   .containerImagen{
-    /*border: 5px solid black;*/
+    border: 5px solid black;
     margin: 0;
-    padding: 0; 
+    padding: 0;
+    margin-left: -100px; 
+    height: 70px;
+    width: 70px;
   }
 
   @keyframes moverBarco {
     0% {
-      transform: translateX(0);
+      transform: translateX(-60px);
     }
     100% {
-      transform: translateX(200vh);
+      transform: translateX(520px);
     }
   }
+
+  .contenedorBody {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    height: 100vh; /* Alto del viewport */
+}

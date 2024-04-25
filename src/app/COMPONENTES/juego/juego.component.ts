@@ -10,12 +10,13 @@ import { Partida } from '../inicio/inicio.component';
 @Component({
   selector: 'app-juego',
   templateUrl: './juego.component.html',
-  styleUrls: ['./juego.component.css']
+  styleUrls: ['./juego.component.css'],
 })
 export class JuegoComponent implements OnInit {
   isLoading = false;
   token: string | null = null;
   idPartida: number | null = null; 
+  tiempo: number = 9000
 
   constructor(
     private renderer: Renderer2,
@@ -40,36 +41,25 @@ export class JuegoComponent implements OnInit {
 
     (window as any).Echo.channel('barco-pantalla').listen('.barco', (data: any) => {
       console.log(data);
-      console.log('hola');
-      if (data.player === 2) {
-        this.iniciarAnimacion1();
-      } else if (data.player === 1) {
-        this.iniciarAnimacion2();
-      }
+      console.log('hola-juego');
+     
     });
     this.obtenerTurno();
   }
 
-  iniciarAnimacion1() {
-    const imagen = this.elementRef.nativeElement.querySelector('.containerImagen');
-    this.renderer.addClass(imagen, 'moverBarco');
-    imagen.addEventListener('animationend', () => {
-      if (this.idPartida !== null) {
-        this.cambiarTurno(this.idPartida);
-      }
-    }, { once: true });
+  activarAnimacion() {
+    const containerImagen = document.querySelector('.containerImagen');
+    containerImagen?.classList.add('moverBarco');
+
+    setTimeout(() => {
+      containerImagen?.classList.remove('moverBarco');
+  }, this.tiempo);
+
+    console.log(containerImagen)
+    console.log(containerImagen?.classList)
   }
 
-  iniciarAnimacion2() {
-    const imagen = this.elementRef.nativeElement.querySelector('.containerImagen');
-    this.renderer.addClass(imagen, 'moverBarco');
-    imagen.addEventListener('animationend', () => {
-      if (this.idPartida !== null) {
-        this.cambiarTurno(this.idPartida);
-      }
-    }, { once: true });
-  }
-
+ 
   obtenerTurno() {
     this.partidasService.obtenerTurno().subscribe(
       (data: any) => {
