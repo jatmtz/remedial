@@ -187,6 +187,12 @@ export class JuegoComponent implements OnInit {
         this.cambiarTurno();
         containerImagen?.classList.remove('moverBarco');
       }
+      else {
+            if (!this.echoChannel) {
+      this.echoChannel.listen('.player-turno');
+    }
+        this.collisionDetected = false;
+      }
     }, this.tiempoBarco);
     
   }
@@ -219,6 +225,7 @@ export class JuegoComponent implements OnInit {
        
     } else {
       this.collisionDetected = false;
+      
     }
          }
         
@@ -306,14 +313,23 @@ export class JuegoComponent implements OnInit {
         this.collisionDetected = true;
         this.activarAnimacion();
 
-        if (this.clicsEnBarra == 0) {
+        /*if (this.clicsEnBarra == 0) {
           this.collisionDetected = false;
           this.echoChannel.listen('.player-turno', (data: any) => {
             this.obtenerTurno();
             this.barcosRestantes();
             console.log('holaaaaaaa');
           });
-        }
+        }*/
+      if (this.echoChannel) {
+            console.log('holaaaaaaa');
+            this.echoChannel.listen('.player-turno', (data: any) => {
+              this.obtenerTurno();
+              this.barcosRestantes();
+              console.log('hola-juego');
+            });
+          }
+
        
       },
       error => {
