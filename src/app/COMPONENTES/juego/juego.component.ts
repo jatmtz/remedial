@@ -10,12 +10,13 @@ import { Partida } from '../inicio/inicio.component';
 @Component({
   selector: 'app-juego',
   templateUrl: './juego.component.html',
-  styleUrls: ['./juego.component.css']
+  styleUrls: ['./juego.component.css'],
 })
 export class JuegoComponent implements OnInit {
   isLoading = false;
   token: string | null = null;
   idPartida: number | null = null; 
+  tiempo: number = 9000
 
   constructor(
     private renderer: Renderer2,
@@ -41,34 +42,30 @@ export class JuegoComponent implements OnInit {
     (window as any).Echo.channel('player-turn').listen('.player-turno', (data: any) => {
       console.log(data);
       if (data.player === this.cookie.get('id')) {
-        this.iniciarAnimacion1();
+        //this.iniciarAnimacion1();
       } 
+      console.log('hola-juego');
     });
 
   }
 
-  iniciarAnimacion1() {
-    const imagen = this.elementRef.nativeElement.querySelector('.containerImagen');
-    this.renderer.addClass(imagen, 'moverBarco');
-    imagen.addEventListener('animationend', () => {
-      if (this.idPartida !== null) {
-        this.cambiarTurno(this.idPartida);
-      }
-    }, { once: true });
+  activarAnimacion() {
+    const containerImagen = document.querySelector('.containerImagen');
+    containerImagen?.classList.add('moverBarco');
+
+    setTimeout(() => {
+      containerImagen?.classList.remove('moverBarco');
+  }, this.tiempo);
   }
 
-  iniciarAnimacion2() {
-    const imagen = this.elementRef.nativeElement.querySelector('.containerImagen');
-    this.renderer.addClass(imagen, 'moverBarco');
-    imagen.addEventListener('animationend', () => {
-      if (this.idPartida !== null) {
-        this.cambiarTurno(this.idPartida);
-      }
-    }, { once: true });
-  }
 
-  obtenerTurno(idPartida: number) {
-    this.partidasService.obtenerTurno(idPartida).subscribe(
+/*obtenerTurno(idPartida: number) {
+    this.partidasService.obtenerTurno(idPartida).subscribe(*/
+      
+
+ 
+  obtenerTurno() {
+    /*this.partidasService.obtenerTurno().subscribe(
       (data: any) => {
         console.log('Turno obtenido:', data);
         this.idPartida = data.idPartida;
@@ -76,7 +73,7 @@ export class JuegoComponent implements OnInit {
       error => {
         console.error('Error al obtener el turno:', error);
       }
-    );
+    );*/
   }
 
   cambiarTurno(idPartida: number) {
