@@ -69,15 +69,5 @@ export class JuegoComponent implements OnInit {
     );
   }
 
-  cambiarTurno(idPartida: number) {
-    //const data = { id_partida: idPartida };
-    this.partidasService.cambiarTurno(idPartida).subscribe(
-      response => {
-        console.log('Turno cambiado exitosamente:', response);
-      },
-      error => {
-        console.error('Error al cambiar el turno:', error);
-      }
-    );
-  }
+ 
 }

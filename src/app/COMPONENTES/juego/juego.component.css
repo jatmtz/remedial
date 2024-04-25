@@ -68,10 +68,10 @@ h1{
   }
   
   .containerImgHeight{
-    padding-top: 250px;
-    position: absolute; /* Posicionamiento absoluto para alinear con respecto al cuerpo */
+    padding-bottom: 20px;
+    position: absolute;
     left: 0;
-    top: 0;
+    top: 75%;
     
   }
 
