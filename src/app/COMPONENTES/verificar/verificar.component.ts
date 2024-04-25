@@ -42,6 +42,7 @@ export class VerificarComponent {
           this.backendErrors.code = '';
           this.backendErrors.message = '';
           this.cookie.set('token', response.access_token, 1);
+          this.cookie.set('id', response.id, 1);
           setTimeout(() => {
             this.backendErrors = {};
             this.isLoading = false;

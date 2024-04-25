@@ -25,7 +25,7 @@ export class PartidasService {
   }
 
   finalizarPartida(data: any): Observable<any>{
-    return this.http.post(`${environment.api_url}/partidas/finalizarPartida`, data, {headers: this.headers});
+    return this.http.put(`${environment.api_url}/partidas/finalizarPartida`, data, {headers: this.headers});
   }
 
   getBarcos(id:number): Observable<any>{
@@ -36,13 +36,12 @@ export class PartidasService {
     return this.http.post(`${environment.api_url}/partidas/ataques`, data, {headers: this.headers});
   }
 
-  obtenerTurno(): Observable<any>{
-    return this.http.get(`${environment.api_url}/partidas/turno`, {headers: this.headers});
+  obtenerTurno(id:number): Observable<any>{
+    return this.http.get(`${environment.api_url}/partidas/turno/${id}`, {headers: this.headers});
   }
 
   cambiarTurno(id_partida: number): Observable<any>{
     return this.http.post(`${environment.api_url}/partidas/cambiarTurno`, {id_partida}, {headers: this.headers});
   }
-
   
 }

@@ -71,9 +71,10 @@ export class InicioComponent {
   {
     this.isLoading = true;
     this.partidasService.createPartida().subscribe((data: any) => {
-      
       this.isLoading = false;
       console.log(data);
+      this.cookie.delete('idPartida');
+      this.cookie.set('idPartida', data.id);
       this.router.navigate(['/espera']);
     });
   }
@@ -82,6 +83,8 @@ export class InicioComponent {
   {
     this.partidasService.unirsePartida(id).subscribe((data: any) => {
       console.log(data);
+      this.cookie.delete('idPartida');
+      this.cookie.set('idPartida', data.id);
       this.router.navigate(['/juego']);
     });
   }
