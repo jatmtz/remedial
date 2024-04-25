@@ -197,40 +197,40 @@ export class JuegoComponent implements OnInit {
     
   }
 
-
   checkCollision() {
     const shipRect = { x1: this.shipPosition.x - 35, y1: this.shipPosition.y - 35, x2: this.shipPosition.x + 35, y2: this.shipPosition.y + 35 };
     const bombRect = { x1: this.bombPosition.x - 35, y1: this.bombPosition.y - 35, x2: this.bombPosition.x + 35, y2: this.bombPosition.y + 35 };
-  
     this.choque = this.checkRectanglesCollision(shipRect, bombRect);
   
     if (this.choque) {
       if (!this.collisionDetected) {
-
-       if (this.echoChannel) {
+        if (this.echoChannel) {
           this.echoChannel.stopListening('.player-turno');
           console.log('¡Colisión detectada!');
-        this.collisionDetected = true;
-
-
-        this.ataques();
-
-        const containerImagen = document.querySelector('.containerImagen');
-        containerImagen?.classList.remove('moverBarco');
-
-        const containerBomba = document.querySelector('.containerBomba') as HTMLElement;
-        containerBomba.classList.remove('moverBomba');
-
+          this.collisionDetected = true;
+          this.ataques();
+  
+          const containerImagen = document.querySelector('.containerImagen');
+          containerImagen?.classList.remove('moverBarco');
+  
+          const containerBomba = document.querySelector('.containerBomba') as HTMLElement;
+          containerBomba.classList.remove('moverBomba');
+  
+          const barcoElement = document.querySelector('.containerImagen') as HTMLElement;
+  
+          if (barcoElement) {
+            const currentStyle = barcoElement.style.animation;
+  
+            const newAnimation = currentStyle.replace(/(\d+)s/g, (match, p1) => `${parseFloat(p1) - 0.8}s`);
+  
+            barcoElement.style.animation = newAnimation;
+          }
+        }
+      } else {
+        this.collisionDetected = false;
       }
-       
-    } else {
-      this.collisionDetected = false;
-      
     }
-         }
-        
   }
-
   checkRectanglesCollision(rect1: Rectangle, rect2: Rectangle): boolean {
     return (
       rect1.x1 < rect2.x2 &&
