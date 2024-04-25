@@ -1,9 +1,11 @@
 <div class="contenedorBody">
-<body>
-    <div class="barra"></div>
-    <div class="containerImgHeight">
+    <body>
+      <div class="barra" (click)="iniciarAnimacionBomba($event)" [class.disabled]="!barraHabilitada || disabledBarra"></div>
+      <div class="containerImgHeight">
         <img class="containerImagen" src="../../../assets/imagenes/barco_titular2.gif" alt="barco">
-    </div>
-</body>
-</div>
-
+      </div>
+      <div class="containerBombHeight hide-container">
+        <img class="containerBomba" src="../../../assets/imagenes/bomba.png" alt="bomba">
+      </div>
+    </body>
+  </div>
