@@ -18,12 +18,12 @@ export const routes: Routes = [
     {path: 'register', component: RegisterComponent},
     {path: 'verificar', component: VerificarComponent, canActivate: [verificarGuard]},
     {path: 'bienvenida', component: BienvenidaComponent, canActivate: [AuthGuard]},
-    {path: 'inicio', component: InicioComponent},
-    {path: 'espera', component: EsperaComponent},
-    {path: 'juego', component: JuegoComponent},
-    {path: 'estadisticas', component: EstadisticasComponent}, 
-    {path: 'ganador', component: GanadorComponent},
-    {path: 'perdedor', component: PerdedorComponent},
+    {path: 'inicio', component: InicioComponent, canActivate: [AuthGuard]},
+    {path: 'espera', component: EsperaComponent, canActivate: [AuthGuard]},
+    {path: 'juego', component: JuegoComponent, canActivate: [AuthGuard]},
+    {path: 'estadisticas', component: EstadisticasComponent, canActivate: [AuthGuard]}, 
+    {path: 'ganador', component: GanadorComponent, canActivate: [AuthGuard]},
+    {path: 'perdedor', component: PerdedorComponent, canActivate: [AuthGuard]},
 
     {
         path: '**',
