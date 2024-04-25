@@ -9,6 +9,8 @@ import { JuegoComponent } from './COMPONENTES/juego/juego.component';
 import { EstadisticasComponent } from './COMPONENTES/estadisticas/estadisticas.component';
 import { verificarGuard } from './Guards/verificar.guard';
 import { AuthGuard } from './Guards/auth.guard';
+import { GanadorComponent } from './COMPONENTES/ganador/ganador.component';
+import { PerdedorComponent } from './COMPONENTES/perdedor/perdedor.component';
 
 export const routes: Routes = [
 
@@ -20,6 +22,8 @@ export const routes: Routes = [
     {path: 'espera', component: EsperaComponent},
     {path: 'juego', component: JuegoComponent},
     {path: 'estadisticas', component: EstadisticasComponent}, 
+    {path: 'ganador', component: GanadorComponent},
+    {path: 'perdedor', component: PerdedorComponent},
 
     {
         path: '**',

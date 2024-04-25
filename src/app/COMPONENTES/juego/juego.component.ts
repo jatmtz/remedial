@@ -17,6 +17,7 @@ export class JuegoComponent implements OnInit {
   token: string | null = null;
   idPartida: number | null = null; 
   tiempo: number = 9000
+  barcos = 15;
 
   constructor(
     private renderer: Renderer2,
@@ -39,11 +40,11 @@ export class JuegoComponent implements OnInit {
       disableStatus: true,
     }); 
     (window as any).Echo.channel('player-turn').listen('.player-turno', (data: any) => {
-      console.log(data);
       this.obtenerTurno();
       console.log('hola-juego');
     });
     this.obtenerTurno();
+    this.barcosRestantes();
   }
 
   activarAnimacion() {
@@ -85,6 +86,42 @@ export class JuegoComponent implements OnInit {
       },
       error => {
         console.error('Error al cambiar el turno:', error);
+      }
+    );
+  }
+
+  barcosRestantes()
+  {
+    this.partidasService.getBarcos(Number(this.cookie.get('idPartida'))).subscribe(
+      (data: any) => {
+        this.barcos = data.barcos;
+        if(this.barcos === 0)
+        {
+          this.finilizarPartida();
+        }
+      },
+      error => {
+        console.error('Error al obtener los barcos restantes:', error);
+      }
+    );
+  }
+
+  finilizarPartida()
+  {
+    this.partidasService.finalizarPartida({id: this.cookie.get('idPartida')}).subscribe(
+      (data: any) => {
+        console.log(data);
+        if(data.ganador === Number(this.cookie.get('id')))
+        {
+          this.router.navigate(['/ganador']);
+        }
+        else if(data.perdedor === Number(this.cookie.get('id')))
+        {
+          this.router.navigate(['/perdedor']);
+        }
+      },
+      error => {
+        console.error('Error al finalizar la partida:', error);
       }
     );
   }
