@@ -70,15 +70,15 @@ export class InicioComponent {
 
   crearPartida()
   {
+    this.isLoading = true;
     if (this.echoChannel) {
       this.echoChannel.stopListening('.barco');
     }
-    this.isLoading = true;
     this.partidasService.createPartida().subscribe((data: any) => {
-      this.isLoading = false;
       console.log(data);
       this.cookie.delete('idPartida');
       this.cookie.set('idPartida', data.id);
+      this.isLoading = false
       this.router.navigate(['/espera']);
     });
   }
@@ -98,10 +98,12 @@ export class InicioComponent {
 
   logOut()
   {
+    this.isLoading = true;
     this.rutasService.logout().subscribe((data: any) => {
       console.log(data);
       this.cookie.deleteAll();
       localStorage.clear();
+      this.isLoading = false;
       this.router.navigate(['/login']);
     });
   }
