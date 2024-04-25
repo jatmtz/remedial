@@ -60,6 +60,7 @@ export class JuegoComponent implements OnInit {
   barraHabilitada = true;
   clicsEnBarra = 0;
   collisionDetected = false;
+  private echoChannel: any;
 
   constructor(
     private renderer: Renderer2,
@@ -68,7 +69,10 @@ export class JuegoComponent implements OnInit {
     private cookie: CookieService,
     private partidasService: PartidasService,
     private rutasService: RutasService
+    
   ) {}
+
+  private playerTurnListener: any;
 
   ngOnInit() {
     (window as any).Pusher = Pusher;
@@ -80,8 +84,23 @@ export class JuegoComponent implements OnInit {
       wsPort: 6001,
       forceTLS: false,
       disableStatus: true,
+      
+
     }); 
-    (window as any).Echo.channel('player-turn').listen('.player-turno', (data: any) => {
+
+
+    this.playerTurnListener = (data: any) => {
+      if (!this.collisionDetected) {
+        this.ataques();
+        this.obtenerTurno();
+        this.barcosRestantes();
+        console.log('hola-juego sin player-turn');
+      }
+    };
+
+
+    this.echoChannel = (window as any).Echo.channel('player-turn');
+    this.echoChannel.listen('.player-turno', (data: any) => {
       this.obtenerTurno();
       this.barcosRestantes();
       console.log('hola-juego');
@@ -93,13 +112,11 @@ export class JuegoComponent implements OnInit {
     const shipElement = document.querySelector('.containerImagen');
     const bombElement = document.querySelector('.containerBomba');
 
-    // Verificar si los elementos existen antes de usarlos
     if (!shipElement || !bombElement) {
-      console.error('No se pudo encontrar los elementos .containerImagen y/o .containerBomba en el DOM');
+      console.error('No se pudo encontrar los elementos .containerImagen o .containerBomba ');
       return;
     }
 
-    // Función para verificar la colisión en cada fotograma
     const checkCollisionOnFrame = () => {
       const shipRect = shipElement.getBoundingClientRect();
       const bombRect = bombElement.getBoundingClientRect();
@@ -107,14 +124,11 @@ export class JuegoComponent implements OnInit {
       this.shipPosition = { x: shipRect.left + shipRect.width / 2, y: shipRect.top + shipRect.height / 2 };
       this.bombPosition = { x: bombRect.left + bombRect.width / 2, y: bombRect.top + bombRect.height / 2 };
 
-      // Verificar la colisión
       this.checkCollision();
 
-      // Llamar a la función nuevamente en el siguiente fotograma
       requestAnimationFrame(checkCollisionOnFrame);
     };
 
-    // Iniciar la verificación de colisión
     checkCollisionOnFrame();
   }
 
@@ -137,7 +151,7 @@ export class JuegoComponent implements OnInit {
       return;
     }
   
-    this.mostrarBomba(); // Mostrar el contenedor de la bomba
+    this.mostrarBomba();
   
     this.clicsEnBarra--;
   
@@ -154,7 +168,7 @@ export class JuegoComponent implements OnInit {
       setTimeout(() => {
         containerBomba.classList.remove('moverBomba');
         containerBomba.style.removeProperty('--bombStartX');
-        this.checkCollision();
+        /*this.checkCollision();*/
         this.disabledBarra = false;
         this.ocultarBomba()
       }, 3000);
@@ -163,14 +177,20 @@ export class JuegoComponent implements OnInit {
 
   activarAnimacion() {
     const containerImagen = document.querySelector('.containerImagen');
+    const containerImagen2 = document.querySelector('.containerImagen') as HTMLElement;
   
     containerImagen?.classList.add('moverBarco');
   
     setTimeout(() => {
-      containerImagen?.classList.remove('moverBarco');
-      this.cambiarTurno();
+      
+      if (!this.collisionDetected){
+        this.cambiarTurno();
+        containerImagen?.classList.remove('moverBarco');
+      }
     }, this.tiempoBarco);
+    
   }
+
 
   checkCollision() {
     const shipRect = { x1: this.shipPosition.x - 35, y1: this.shipPosition.y - 35, x2: this.shipPosition.x + 35, y2: this.shipPosition.y + 35 };
@@ -180,14 +200,28 @@ export class JuegoComponent implements OnInit {
   
     if (this.choque) {
       if (!this.collisionDetected) {
-        console.log('¡Colisión detectada!');
+
+       if (this.echoChannel) {
+          this.echoChannel.stopListening('.player-turno');
+          console.log('¡Colisión detectada!');
         this.collisionDetected = true;
+
+
         this.ataques();
+
+        const containerImagen = document.querySelector('.containerImagen');
+        containerImagen?.classList.remove('moverBarco');
+
+        const containerBomba = document.querySelector('.containerBomba') as HTMLElement;
+        containerBomba.classList.remove('moverBomba');
+
       }
-      this.tiempoBarco -= 500; // Reducir la duración de la animación en 0.5 segundos
+       
     } else {
       this.collisionDetected = false;
     }
+         }
+        
   }
 
   checkRectanglesCollision(rect1: Rectangle, rect2: Rectangle): boolean {
@@ -204,8 +238,8 @@ export class JuegoComponent implements OnInit {
       (data: any) => {
         if (data.turno === Number(this.cookie.get('id'))) {
           this.activarAnimacion();
-          this.barraHabilitada = true; // Habilitar la barra al inicio del turno
-          this.clicsEnBarra = 2; // Restablecer el contador de bombas a 2
+          this.barraHabilitada = true; 
+          this.clicsEnBarra = 2; 
         } else {
           this.barraHabilitada = false; 
           this.clicsEnBarra = 0; 
@@ -232,6 +266,7 @@ export class JuegoComponent implements OnInit {
   barcosRestantes() {
     this.partidasService.getBarcos(Number(this.cookie.get('idPartida'))).subscribe(
       (data: any) => {
+
         if(data.barcos === 0) {
           this.finilizarPartida();
         }
@@ -261,9 +296,25 @@ export class JuegoComponent implements OnInit {
 
   ataques()
   {
+    this.isLoading = true;
+    if (this.echoChannel) {
+      this.echoChannel.stopListening('.player-turno');
+    }
     this.partidasService.ataques(Number(this.cookie.get('idPartida'))).subscribe(
       response => {
         console.log('Ataque realizado:', response);
+        this.collisionDetected = true;
+        this.activarAnimacion();
+
+        if (this.clicsEnBarra == 0) {
+          this.collisionDetected = false;
+          this.echoChannel.listen('.player-turno', (data: any) => {
+            this.obtenerTurno();
+            this.barcosRestantes();
+            console.log('holaaaaaaa');
+          });
+        }
+       
       },
       error => {
         console.error('Error al realizar el ataque:', error);
