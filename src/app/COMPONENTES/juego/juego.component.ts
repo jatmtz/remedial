@@ -54,9 +54,6 @@ export class JuegoComponent implements OnInit {
     setTimeout(() => {
       containerImagen?.classList.remove('moverBarco');
   }, this.tiempo);
-
-    console.log(containerImagen)
-    console.log(containerImagen?.classList)
   }
 
  
