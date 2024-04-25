@@ -53,13 +53,13 @@ export class JuegoComponent implements OnInit {
   idPartida: number | null = null; 
   tiempo: number = 9000;
   tiempoBarco = 9000;
-  barcos = 15;
   shipPosition = { x: 0, y: 0 };
   bombPosition = { x: 0, y: 0 };
   choque = false;
   disabledBarra = false;
   barraHabilitada = true;
   clicsEnBarra = 0;
+  collisionDetected = false;
 
   constructor(
     private renderer: Renderer2,
@@ -83,10 +83,39 @@ export class JuegoComponent implements OnInit {
     }); 
     (window as any).Echo.channel('player-turn').listen('.player-turno', (data: any) => {
       this.obtenerTurno();
+      this.barcosRestantes();
       console.log('hola-juego');
     });
+    
     this.obtenerTurno();
     this.barcosRestantes();
+
+    const shipElement = document.querySelector('.containerImagen');
+    const bombElement = document.querySelector('.containerBomba');
+
+    // Verificar si los elementos existen antes de usarlos
+    if (!shipElement || !bombElement) {
+      console.error('No se pudo encontrar los elementos .containerImagen y/o .containerBomba en el DOM');
+      return;
+    }
+
+    // Función para verificar la colisión en cada fotograma
+    const checkCollisionOnFrame = () => {
+      const shipRect = shipElement.getBoundingClientRect();
+      const bombRect = bombElement.getBoundingClientRect();
+
+      this.shipPosition = { x: shipRect.left + shipRect.width / 2, y: shipRect.top + shipRect.height / 2 };
+      this.bombPosition = { x: bombRect.left + bombRect.width / 2, y: bombRect.top + bombRect.height / 2 };
+
+      // Verificar la colisión
+      this.checkCollision();
+
+      // Llamar a la función nuevamente en el siguiente fotograma
+      requestAnimationFrame(checkCollisionOnFrame);
+    };
+
+    // Iniciar la verificación de colisión
+    checkCollisionOnFrame();
   }
 
   mostrarBomba() {
@@ -104,39 +133,33 @@ export class JuegoComponent implements OnInit {
   }
 
   iniciarAnimacionBomba(event: MouseEvent) {
-    if (!this.barraHabilitada || this.disabledBarra) {
+    if (!this.barraHabilitada || this.disabledBarra || this.clicsEnBarra <= 0) {
       return;
     }
-
+  
     this.mostrarBomba(); // Mostrar el contenedor de la bomba
-
-    this.clicsEnBarra++;
-
-    if (this.clicsEnBarra >= 2) {
-      this.barraHabilitada = false;
-    }
-
+  
+    this.clicsEnBarra--;
+  
     const containerBomba = document.querySelector('.containerBomba') as HTMLElement;
     const barra = event.currentTarget as HTMLElement;
     const barraRect = barra.getBoundingClientRect();
     const clickX = event.clientX - barraRect.left;
-
+  
     if (containerBomba) {
       this.disabledBarra = true;
       containerBomba.classList.add('moverBomba');
       containerBomba.style.setProperty('--bombStartX', `${clickX}px`);
-
+  
       setTimeout(() => {
         containerBomba.classList.remove('moverBomba');
         containerBomba.style.removeProperty('--bombStartX');
-        /*this.checkCollision();*/
+        this.checkCollision();
         this.disabledBarra = false;
         this.ocultarBomba()
       }, 3000);
     }
   }
-
-
 
   activarAnimacion() {
     const containerImagen = document.querySelector('.containerImagen');
@@ -145,7 +168,6 @@ export class JuegoComponent implements OnInit {
   
     setTimeout(() => {
       containerImagen?.classList.remove('moverBarco');
-      /*this.checkCollision();*/
       this.cambiarTurno();
     }, this.tiempoBarco);
   }
@@ -157,11 +179,16 @@ export class JuegoComponent implements OnInit {
     this.choque = this.checkRectanglesCollision(shipRect, bombRect);
   
     if (this.choque) {
-      console.log('¡Colisión detectada!');
+      if (!this.collisionDetected) {
+        console.log('¡Colisión detectada!');
+        this.collisionDetected = true;
+        this.ataques();
+      }
       this.tiempoBarco -= 500; // Reducir la duración de la animación en 0.5 segundos
+    } else {
+      this.collisionDetected = false;
     }
   }
-
 
   checkRectanglesCollision(rect1: Rectangle, rect2: Rectangle): boolean {
     return (
@@ -172,31 +199,26 @@ export class JuegoComponent implements OnInit {
     );
   }
 
-
-/*obtenerTurno(idPartida: number) {
-    this.partidasService.obtenerTurno(idPartida).subscribe(*/
-      
-
- 
-    obtenerTurno() {
-      this.partidasService.obtenerTurno(Number(this.cookie.get('idPartida'))).subscribe(
-        (data: any) => {
-          if (data.turno === Number(this.cookie.get('id'))) {
-            this.activarAnimacion();
-            this.barraHabilitada = true; // Habilitar la barra al inicio del turno
-            this.clicsEnBarra = 0; // Reiniciar el contador de clics en la barra
-          }
-          this.idPartida = data.idPartida;
-        },
-        error => {
-          console.error('Error al obtener el turno:', error);
+  obtenerTurno() {
+    this.partidasService.obtenerTurno(Number(this.cookie.get('idPartida'))).subscribe(
+      (data: any) => {
+        if (data.turno === Number(this.cookie.get('id'))) {
+          this.activarAnimacion();
+          this.barraHabilitada = true; // Habilitar la barra al inicio del turno
+          this.clicsEnBarra = 2; // Restablecer el contador de bombas a 2
+        } else {
+          this.barraHabilitada = false; 
+          this.clicsEnBarra = 0; 
         }
-      );
-    }
-  
+        this.idPartida = data.idPartida;
+      },
+      error => {
+        console.error('Error al obtener el turno:', error);
+      }
+    );
+  }
 
   cambiarTurno() {
-    //const data = { id_partida: idPartida };
     this.partidasService.cambiarTurnos(Number(this.cookie.get('idPartida'))).subscribe(
       response => {
         console.log('Turno cambiado exitosamente:', response);
@@ -207,13 +229,10 @@ export class JuegoComponent implements OnInit {
     );
   }
 
-  barcosRestantes()
-  {
+  barcosRestantes() {
     this.partidasService.getBarcos(Number(this.cookie.get('idPartida'))).subscribe(
       (data: any) => {
-        this.barcos = data.barcos;
-        if(this.barcos === 0)
-        {
+        if(data.barcos === 0) {
           this.finilizarPartida();
         }
       },
@@ -223,22 +242,31 @@ export class JuegoComponent implements OnInit {
     );
   }
 
-  finilizarPartida()
-  {
-    this.partidasService.finalizarPartida({id: this.cookie.get('idPartida')}).subscribe(
+  finilizarPartida() {
+    this.partidasService.finalizarPartida(Number(this.cookie.get('idPartida'))).subscribe(
       (data: any) => {
         console.log(data);
-        if(data.ganador === Number(this.cookie.get('id')))
-        {
+        if(data.ganador === Number(this.cookie.get('id'))) {
           this.router.navigate(['/ganador']);
         }
-        else if(data.perdedor === Number(this.cookie.get('id')))
-        {
+        else if(data.perdedor === Number(this.cookie.get('id'))) {
           this.router.navigate(['/perdedor']);
         }
       },
       error => {
         console.error('Error al finalizar la partida:', error);
+      }
+    );
+  }
+
+  ataques()
+  {
+    this.partidasService.ataques(Number(this.cookie.get('idPartida'))).subscribe(
+      response => {
+        console.log('Ataque realizado:', response);
+      },
+      error => {
+        console.error('Error al realizar el ataque:', error);
       }
     );
   }
